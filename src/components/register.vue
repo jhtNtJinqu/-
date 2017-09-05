@@ -3,14 +3,14 @@
   <mu-appbar title="注册"></mu-appbar>
   <img src="../assets/login.jpg" />
   <div class="form">
-    <mu-text-field hintText="请输入手机号" type="number" @blur="phoneInput" :errorText="inputErrorText" icon="phone_iphone" fullWidth /><br/>
+    <mu-text-field hintText="请输入手机号"  v-model="phone"   type="number" @blur="phoneInput" :errorText="inputErrorText" icon="phone_iphone" fullWidth /><br/>
     <div class="verify">
-      <mu-text-field hintText="请输入验证码" type="number" icon="chat" fullWidth  :errorText="verErrorText"  />
+      <mu-text-field hintText="请输入验证码"  v-model="verify"  type="number" icon="chat" fullWidth  :errorText="verErrorText"  />
 
       <mu-flat-button   @click="getMess"  :label="mess" class="demo-flat-button" :disabled='btnStatus'  />
     </div>
     <br/>
-    <mu-text-field hintText="请输入6位数以上的密码"   @blur="passInput" :errorText="passErrorText" type="password" icon="lock_outline" fullWidth/><br/>
+    <mu-text-field hintText="请输入6位数以上的密码"  v-model="pass"  @blur="passInput" :errorText="passErrorText" type="password" icon="lock_outline" fullWidth/><br/>
   </div>
   <div class="btn">
     <mu-raised-button label="注册"  @click="submit"   class="demo-raised-button" secondary fullWidth />
@@ -28,26 +28,28 @@ export default {
       verErrorText: '',
       btnStatus: false,
       mess: '获取验证码',
-      num: 60
+      num: 60,
+      phone: '',
+      verify: '',
+      pass: ''
+
     }
   },
   methods: {
-
-    phoneInput(value) {
-
-      if (!(/^1[34578]\d{9}$/.test( value.target.value))) {
+    phoneInput() {
+      if (!(/^1[34578]\d{9}$/.test( this.phone))) {
         this.inputErrorText = "请输入正确手机号";
       } else {
         this.inputErrorText = "";
       }
     },
-    passInput(value) {
-      if (  value.target.value.length<6) {
+    passInput() {
+
+      if (  this.pass.length<6) {
         this.passErrorText = "密码必须6位数以上";
       } else {
         this.passErrorText = "";
       }
-
     },
     getMess(){
         this.btnStatus=true;
