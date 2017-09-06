@@ -65,7 +65,7 @@ export default {
               this.btnStatus=false;
           }
 
-        },10000)
+        },1000)
     },
     submit(){
 
