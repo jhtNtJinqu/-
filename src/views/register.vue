@@ -1,4 +1,5 @@
 <template>
+  <!-- 注册 -->
 <div class="register">
   <mu-appbar title="注册"></mu-appbar>
   <img src="../assets/login.jpg" />
@@ -64,10 +65,11 @@ export default {
               this.num=60;
               this.btnStatus=false;
           }
-
         },1000)
     },
     submit(){
+
+
 
     }
   }
