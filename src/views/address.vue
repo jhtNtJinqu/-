@@ -87,7 +87,7 @@ export default {
       this.dialogb = true;
       this.dialoga = false;
       this.inputBox = false;
-      this.axios.post('http://192.168.1.107:8002/api/Params/Region?regionid=' + value).
+      this.axios.post('/api/Params/Region?regionid=' + value).
       then((res) => {
 
           this.erji = res.data;
@@ -102,7 +102,7 @@ export default {
       this.areab = name;
       this.dialogb = false;
       this.dialogc = true;
-      this.axios.post('http://192.168.1.107:8002/api/Params/Region?regionid=' + value).
+      this.axios.post('/api/Params/Region?regionid=' + value).
       then((res) => {
           this.sanji = res.data;
         })
@@ -141,7 +141,7 @@ export default {
 
   },
   created() {
-    this.axios.post('http://192.168.1.107:8002/api/Params/Region ').
+    this.axios.post('/api/Params/Region ').
     then((res) => {
         this.yiji = res.data;
       })
