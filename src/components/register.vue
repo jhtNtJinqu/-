@@ -9,7 +9,7 @@
 
       <mu-flat-button   @click="getMess"  :label="mess" class="demo-flat-button" :disabled='btnStatus'  />
     </div>
-    <br/>
+
     <mu-text-field hintText="请输入6位数以上的密码"  v-model="pass"  @blur="passInput" :errorText="passErrorText" type="password" icon="lock_outline" fullWidth/><br/>
   </div>
   <div class="btn">
@@ -53,6 +53,7 @@ export default {
     },
     getMess(){
         this.btnStatus=true;
+        this.mess="获取验证码("+this.num+")";
         var clear=setInterval(()=>{
           this.mess="获取验证码("+this.num+")";
           this.num--;
@@ -64,7 +65,7 @@ export default {
               this.btnStatus=false;
           }
 
-        },1000)
+        },10000)
     },
     submit(){
 
