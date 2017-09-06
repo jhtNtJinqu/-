@@ -5,7 +5,7 @@
       <img src="../assets/login.jpg" />
       <div class="form">
         <mu-text-field hintText="请输入手机号" type="number" icon="phone_iphone" fullWidth="true" /><br/>
-        <mu-text-field hintText="请输入密码" type="number" icon="lock_outline" fullWidth="true"/><br/>
+        <mu-text-field hintText="请输入密码" type="text" icon="lock_outline" fullWidth="true"/><br/>
       </div>
       <div class="btn">
         <mu-raised-button label="登录" class="demo-raised-button" secondary fullWidth="true" />
