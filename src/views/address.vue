@@ -49,8 +49,7 @@
 </div>
 </template>
 
-<script scoped>
-
+<script >
 export default {
   data() {
     return {
@@ -120,6 +119,7 @@ export default {
     submit() {
 
 
+
       if(this.address=='') {
         this.addError="请输入所在地区";
         return false;
@@ -127,8 +127,11 @@ export default {
       if(this.detailAddress=='') {
         this.detaError="请输入详细地址";
         return false;
-
       }
+
+
+      this.$store.commit('changeAdd',this.items);
+
       this.$router.push({
         path: '/uploadimage'
       })
@@ -148,6 +151,14 @@ export default {
       .catch(function(err) {
         console.log(err);
       });
+  },
+  computed: {
+    items(){
+      return {
+        areaid: this.areaid,
+        detailAddress: this.detailAddress
+      }
+    }
   }
 
 }

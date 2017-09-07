@@ -8,11 +8,11 @@
     <mu-sub-header>企业印业执照</mu-sub-header>
     <mu-grid-list class="gridlist"  v-if="urla">
       <mu-grid-tile>
-        <img :src="urlb" />
+        <img :src="urla" />
       </mu-grid-tile>
     </mu-grid-list>
     <mu-content-block>
-      <vue-core-image-upload class="btn btn-primary" :crop="false" @imageuploaded="imageuploadea" text='' :max-file-size="5242880" url="">
+      <vue-core-image-upload class="btn btn-primary"  inputOfFile="img3"  :crop="false" @imageuploaded="imageuploadea" text='' :max-file-size="5242880" url="/personal/tools/upload3">
          <mu-icon value="photo"  color="#ccc" />
       </vue-core-image-upload>
     </mu-content-block>
@@ -25,7 +25,7 @@
       </mu-grid-tile>
     </mu-grid-list>
     <mu-content-block>
-      <vue-core-image-upload class="btn btn-primary" :crop="false" @imageuploaded="imageuploadeb" text='' :max-file-size="5242880" url="">
+      <vue-core-image-upload class="btn btn-primary"  inputOfFile="img4"   :crop="false" @imageuploaded="imageuploadeb" text='' :max-file-size="5242880" url="/personal/tools/upload4">
          <mu-icon value="photo"  color="#ccc" />
       </vue-core-image-upload>
     </mu-content-block>
@@ -38,7 +38,7 @@
       </mu-grid-tile>
     </mu-grid-list>
     <mu-content-block>
-      <vue-core-image-upload class="btn btn-primary" :crop="false" @imageuploaded="imageuploadec" text='' :max-file-size="5242880" url="">
+      <vue-core-image-upload class="btn btn-primary"   inputOfFile="img5"     :crop="false" @imageuploaded="imageuploadec" text='' :max-file-size="5242880" url="/personal/tools/upload5">
          <mu-icon value="photo"  color="#ccc" />
       </vue-core-image-upload>
     </mu-content-block>
@@ -51,7 +51,7 @@
       </mu-grid-tile>
     </mu-grid-list>
     <mu-content-block>
-      <vue-core-image-upload class="btn btn-primary" :crop="false" @imageuploaded="imageuploaded" text='' :max-file-size="5242880" url="">
+      <vue-core-image-upload class="btn btn-primary"    inputOfFile="img6"    :crop="false" @imageuploaded="imageuploaded" text='' :max-file-size="5242880" url="/personal/tools/upload6">
          <mu-icon value="photo"  color="#ccc" />
       </vue-core-image-upload>
     </mu-content-block>
@@ -64,6 +64,12 @@
     <mu-flat-button slot="actions" @click="close" primary label="取消"/>
     <mu-flat-button slot="actions" primary @click="confire" label="确定"/>
   </mu-dialog>
+  <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopupa">
+   注册成功
+ </mu-popup>
+ <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopupb">
+  证件照不能为空
+</mu-popup>
 </div>
 </template>
 
@@ -80,7 +86,9 @@ export default {
       urla: "",
       urlc: "",
       urld: "",
-      dialog: false
+      dialog: false,
+      topPopupa: false,
+      topPopupb: false
     }
   },
   methods: {
@@ -90,33 +98,79 @@ export default {
       })
     },
     imageuploadea(res) {
-      if (res.errcode == 0) {
-        this.urla = res.data.src;
-      }
+
+        this.urla = res.url;
+
     },
     imageuploadeb(res) {
-      if (res.errcode == 0) {
-        this.urlb = res.data.src;
-      }
+
+        this.urlb = res.url;
+
     },
     imageuploadec(res) {
-      if (res.errcode == 0) {
-        this.urlc = res.data.src;
-      }
+
+        this.urlc = res.url;
+
     },
     imageuploaded(res) {
-      if (res.errcode == 0) {
-        this.urld = res.data.src;
-      }
+
+        this.urld = res.url;
+
     },
     close () {
       this.dialog = false
     },
     submit(){
+
       this.dialog = true
     },
     confire(){
+      this.$store.commit('changeImageb',this.items);
       this.dialog = false;
+      this.axios.post('/personal/personal/addbase ', {
+          name: this.$store.state.certification.company,
+          tax_number: this.$store.state.certification.duty,
+          bank_of_deposit: this.$store.state.certification.bank ,
+          bank_account: this.$store.state.certification.bankNum ,
+          contact: this.$store.state.certification.person,
+          mobile: this.$store.state.certification.phone ,
+          district: this.$store.state.certification.areaid,
+          qq: this.$store.state.certification.qq,
+          contact_address: this.$store.state.certification.deatil ,
+          img3:  this.$store.state.certification.img3,
+          img4: this.$store.state.certification.img4,
+          img5: this.$store.state.certification.img5,
+          img6: this.$store.state.certification.img6
+        })
+        .then((res) => {
+          console.log(res);
+
+          if(res.status==200) {
+            this.topPopupa=true;
+            setTimeout(() => {
+              this.$router.push({
+                path: '/certification'
+              })
+            }, 1500)
+          }
+
+          // window.location.reload();
+        })
+        .catch(function(err) {
+          // console.log(err);
+        });
+
+
+    }
+  },
+  computed: {
+    items(){
+      return {
+        img3: this.urla,
+        img4: this.urlb,
+        img5: this.urlc,
+        img6: this.urld
+      }
     }
   }
 }
@@ -184,4 +238,16 @@ export default {
 .material-icons {
   font-size: 50px;
 }
+
+.demo-popup-top {
+ width: 100%;
+ opacity: .8;
+ height: 48px;
+ line-height: 48px;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ max-width: 375px;
+}
+
 </style>

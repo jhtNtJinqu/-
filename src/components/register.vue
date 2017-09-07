@@ -1,21 +1,27 @@
 <template>
-  <!-- 注册 -->
+<!-- 注册 -->
 <div class="register">
   <mu-appbar title="注册"></mu-appbar>
   <img src="../assets/login.jpg" />
   <div class="form">
-    <mu-text-field hintText="请输入手机号"  v-model="phone"   type="number" @blur="phoneInput" :errorText="inputErrorText" icon="phone_iphone" fullWidth /><br/>
+    <mu-text-field hintText="请输入手机号" v-model="phone" @input="input" type="number" @blur="phoneInput" :errorText="inputErrorText" icon="phone_iphone" fullWidth /><br/>
     <div class="verify">
-      <mu-text-field hintText="请输入验证码"  v-model="verify"  type="number" icon="chat" fullWidth  :errorText="verErrorText"  />
+      <mu-text-field hintText="请输入验证码" v-model="verify" @input="verErrorText=''" type="number" icon="chat" fullWidth :errorText="verErrorText" />
 
-      <mu-flat-button   @click="getMess"  :label="mess" class="demo-flat-button" :disabled='btnStatus'  />
+      <mu-flat-button @click="getMess" :label="mess" class="demo-flat-button" :disabled='btnStatus' />
     </div>
 
-    <mu-text-field hintText="请输入6位数以上的密码"  v-model="pass"  @blur="passInput" :errorText="passErrorText" type="password" icon="lock_outline" fullWidth/><br/>
+    <mu-text-field hintText="请输入6位数以上的密码" @input="passErrorText=''" v-model="pass" @blur="passInput" :errorText="passErrorText" type="password" icon="lock_outline" fullWidth/><br/>
   </div>
   <div class="btn">
-    <mu-raised-button label="注册"  @click="submit"   class="demo-raised-button" secondary fullWidth />
+    <mu-raised-button label="注册" @click="submit" class="demo-raised-button" secondary fullWidth />
   </div>
+  <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopup">
+    注册成功
+  </mu-popup>
+  <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopupb">
+    注册失败
+  </mu-popup>
 </div>
 </template>
 
@@ -32,88 +38,157 @@ export default {
       num: 60,
       phone: '',
       verify: '',
-      pass: ''
-
+      pass: '',
+      topPopup: false,
+      topPopupb: false,
     }
   },
   methods: {
+    input() {
+      if ((/^1[34578]\d{9}$/.test(this.phone))) {
+        this.btnStatus = false;
+      }
+    },
     phoneInput() {
-      if (!(/^1[34578]\d{9}$/.test( this.phone))) {
+      if (!(/^1[34578]\d{9}$/.test(this.phone))) {
         this.inputErrorText = "请输入正确手机号";
       } else {
         this.inputErrorText = "";
+
       }
     },
     passInput() {
 
-      if (  this.pass.length<6) {
+      if (this.pass.length < 6) {
         this.passErrorText = "密码必须6位数以上";
       } else {
         this.passErrorText = "";
       }
     },
-    getMess(){
-        this.btnStatus=true;
-        this.mess="获取验证码("+this.num+")";
-        var clear=setInterval(()=>{
-          this.mess="获取验证码("+this.num+")";
+    getMess() {
+      if (!/^1[34578]\d{9}$/.test(this.phone)) {
+        this.btnStatus = true;
+        this.inputErrorText = "请先输入正确的手机号";
+        return false;
+      } else {
+        this.btnStatus = false;
+        this.mess = "获取验证码(" + this.num + ")";
+        var clear = setInterval(() => {
+          this.mess = "获取验证码(" + this.num + ")";
           this.num--;
-          this.mess="获取验证码("+this.num+")";
-          if(this.num==1) {
+          this.mess = "获取验证码(" + this.num + ")";
+          if (this.num == 1) {
             clearInterval(clear)
-              this.mess="重新获取";
-              this.num=60;
-              this.btnStatus=false;
+            this.mess = "重新获取";
+            this.num = 60;
+            this.btnStatus = false;
           }
-        },1000)
+        }, 1000)
+      }
+      this.axios.post('/personal/register/getMsg', {
+          phone: this.phone
+        })
+        .then(res => {
+
+        })
+        .catch(err => {
+          // console.log(err);
+        });
+
     },
-    submit(){
+    submit() {
 
+      if (this.phone == '') {
+        this.inputErrorText = "手机号不能为空";
+        return false;
+      }
+      if (this.verify == "") {
+        this.verErrorText = "验证码不能为空";
+        return false;
+      }
+      if (this.pass == "") {
+        this.passErrorText = "密码不能为空";
+        return false;
+      }
+      this.axios.post('/personal/register/register', {
+          phone: this.phone,
+          password: this.pass,
+          messageCode: this.verify
+        })
+        .then(res => {
+          if (res.data) {
+            this.topPopup = true;
+            setTimeout(() => {
+              this.$router.push({
+                path: '/certification'
+              })
+            }, 1500)
 
+          } else {
+            this.topPopupb = true;
+            setTimeout(() => {
+              this.topPopupb = false;
+            }, 1500)
+          }
+        })
+        .catch(err => {
+          // console.log(err);
+        });
 
     }
-  }
+  },
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-.mu-appbar {
+<style>
+.register .mu-appbar {
   text-align: center
 }
 
-img {
+.register img {
   width: 100%
 }
 
-.mu-tabs {
+.register .mu-tabs {
   margin-top: 0;
 }
 
-.form {
+.register .form {
   margin-top: 50px;
   padding-right: 45px;
   padding-left: 25px;
 }
 
-.demo-raised-button {
+.register .register .demo-raised-button {
   background-color: #3399ff;
   height: 50px;
   border-radius: 50px;
   font-size: 20px;
 }
 
-.btn {
+.register .btn {
   padding: 50px;
 }
 
-.verify {
+.register .verify {
   position: relative;
-
 }
-.verify .demo-flat-button {
+
+.register .verify .demo-flat-button {
   position: absolute;
   right: 0;
   top: 0;
+}
+
+.demo-popup-top {
+  width: 100%;
+  opacity: .8;
+  height: 48px;
+  line-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 375px;
 }
 </style>

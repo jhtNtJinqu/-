@@ -8,11 +8,11 @@
     <mu-sub-header>企业印业执照</mu-sub-header>
     <mu-grid-list class="gridlist"  v-if="urla">
       <mu-grid-tile>
-        <img :src="urlb" />
+        <img :src="urla" />
       </mu-grid-tile>
     </mu-grid-list>
     <mu-content-block>
-      <vue-core-image-upload class="btn btn-primary" :crop="false" @imageuploaded="imageuploadea" text='' :max-file-size="5242880" url="">
+      <vue-core-image-upload class="btn btn-primary"   inputOfFile="img1"   :crop="false" @imageuploaded="imageuploadea" text='' :max-file-size="5242880" url="/personal/tools/upload1">
          <mu-icon value="photo"  color="#ccc" />
       </vue-core-image-upload>
     </mu-content-block>
@@ -25,7 +25,7 @@
       </mu-grid-tile>
     </mu-grid-list>
     <mu-content-block>
-      <vue-core-image-upload class="btn btn-primary" :crop="false" @imageuploaded="imageuploadeb" text='' :max-file-size="5242880" url="">
+      <vue-core-image-upload class="btn btn-primary"   inputOfFile="img2"  :crop="false" @imageuploaded="imageuploadeb" text='' :max-file-size="5242880" url="/personal/tools/upload2">
          <mu-icon value="photo"  color="#ccc" />
       </vue-core-image-upload>
     </mu-content-block>
@@ -38,6 +38,13 @@
     <mu-flat-button slot="actions" @click="close" primary label="取消"/>
     <mu-flat-button slot="actions" primary @click="confire" label="确定"/>
   </mu-dialog>
+
+  <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopupa">
+   注册成功
+ </mu-popup>
+ <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopupb">
+  证件照不能为空
+</mu-popup>
 </div>
 </template>
 
@@ -52,7 +59,9 @@ export default {
       src: '',
       urlb: "",
       urla: "",
-      dialog: false
+      dialog: false,
+      topPopupa: false,
+      topPopupb: false
     }
   },
   methods: {
@@ -62,55 +71,101 @@ export default {
       })
     },
     imageuploadea(res) {
-      if (res.errcode == 0) {
-        this.urla = res.data.src;
-      }
+      this.urla = res.url;
     },
     imageuploadeb(res) {
-      if (res.errcode == 0) {
-        this.urlb = res.data.src;
-      }
+
+      this.urlb = res.url;
+
     },
     close () {
       this.dialog = false
     },
     submit(){
-      this.dialog = true
+      this.dialog = true;
     },
     confire(){
+
+      this.$store.commit('changeImagea',this.items);
+
+      console.log(this.$store.state.certification)
+
       this.dialog = false;
+
+      this.axios.post('/personal/personal/addbase ', {
+          name: this.$store.state.certification.company,
+          tax_number: this.$store.state.certification.duty,
+          bank_of_deposit: this.$store.state.certification.bank ,
+          bank_account: this.$store.state.certification.bankNum ,
+          contact: this.$store.state.certification.person,
+          mobile: this.$store.state.certification.phone ,
+          district: this.$store.state.certification.areaid,
+          qq: this.$store.state.certification.qq,
+          contact_address: this.$store.state.certification.deatil ,
+          img1:  this.$store.state.certification.img1,
+          img2: this.$store.state.certification.img2
+        })
+        .then(res => {
+          console.log(res);
+          if(res.status==200) {
+            this.topPopupa=true;
+            setTimeout(() => {
+              this.$router.push({
+                path: '/certification'
+              })
+            }, 1500)
+          }
+
+
+          // window.location.reload();
+        })
+        .catch(function(err) {
+          // console.log(err);
+        });
+
+
+
+
+    }
+  },
+  computed: {
+    items(){
+      return {
+        img1: this.urla,
+        img2: this.urlb
+      }
     }
   }
 }
 </script>
 
 <style>
-.mu-appbar {
+.uploadimage  .mu-appbar {
   text-align: center;
   font-size: 20px;
 }
 
-.mu-appbar span:nth-child(1) {
+.uploadimage  .mu-appbar span:nth-child(1) {
   font-size: 26px;
 }
 
-.mu-appbar span:nth-child(2) {
+.uploadimage  .mu-appbar span:nth-child(2) {
   width: 100%;
   text-align: center;
 }
 
-.yiji {
+.uploadimage  .yiji {
   position: relative;
 }
 
 
-.jian {
+.uploadimage  .jian {
   position: absolute;
   right: 3%;
   top: 28%;
 }
 
-.btn-primary {
+.uploadimage  .btn-primary {
   background-color: #fbfdff;
   border: 1px dashed #c0ccda;
   border-radius: 6px;
@@ -122,31 +177,43 @@ export default {
   vertical-align: top;
   text-align: center;
 }
-.btn-primary  form {
+.uploadimage  .btn-primary  form {
   height: 148px !important;
 }
-.mu-grid-tile-titlebar {
-  display: none;
-}
+
 
 .mu-grid-tile-titlebar {
-  display: none;
+  display: none !important;
 }
 
 
 
-.btna  .demo-raised-button {
+
+.uploadimage  .btna  .demo-raised-button {
   background-color: #3399ff;
   height: 50px;
   border-radius: 50px;
   font-size: 20px;
 }
 
-.btna {
+.uploadimage  .btna {
   padding: 20px 50px 50px 50px;
 }
 
-.material-icons {
+.uploadimage .material-icons {
   font-size: 50px;
 }
+
+
+ .demo-popup-top {
+  width: 100%;
+  opacity: .8;
+  height: 48px;
+  line-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 375px;
+}
+
 </style>
