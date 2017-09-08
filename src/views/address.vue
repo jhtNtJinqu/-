@@ -3,35 +3,39 @@
 
 <div class="address">
   <div class="mu-appbar">
-    <span @click="prev"><</span>
+    <span @click="prev" v-show="!back" ><mu-icon value="keyboard_arrow_left" :size="38"/></span>
     <span>填写联系地址</span>
   </div>
   <div class="form">
     <div class="address-select" v-if="inputBox">
-      <mu-text-field hintText="所在地区"  :errorText="addError"   @focus="addError=''"  fullWidth disabled v-model="address" />
-      <mu-flat-button label="请选择" @click="showDialog" class="address-btn demo-flat-button" /><br/>
-      <mu-text-field hintText="详细地址"  :errorText="detaError"  @focus="detaError=''" v-model="detailAddress"  multiLine :rows="4" fullWidth :rowsMax="7" /><br/>
+
+      <div class="area">
+        <mu-text-field hintText="所在地区"  :errorText="addError"   @focus="addError=''"  fullWidth disabled v-model="address" />
+        <mu-flat-button label="请选择" @click="showDialog"   :disabled="disabled"   class="address-btn demo-flat-button" /><br/>
+      </div>
+
+      <mu-text-field hintText="详细地址"  :disabled="disabled"   fullWidth :errorText="detaError"  @focus="detaError=''" v-model="detailAddress"  /><br/>
     </div>
     <div class="choose" v-if="dialog">
       <mu-list>
         <template v-if="dialoga" v-for="item in yiji">
             <div class="yiji">
               <mu-list-item :title="item.name" :data="item.id" @click="yijiClick(item.id,item.name)" />
-               <span class="jian" >></span>
+               <span class="jian" ><mu-icon value="keyboard_arrow_right"  color="#999"  :size="20"/></span>
               <mu-divider/>
             </div>
         </template>
         <template v-if="dialogb" v-for="item in erji">
             <div class="yiji">
               <mu-list-item :title="item.name" :data="item.id" @click="erjiClick(item.id,item.name)"   />
-               <span class="jian" >></span>
+              <span class="jian" ><mu-icon value="keyboard_arrow_right"  color="#999"  :size="20"/></span>
               <mu-divider/>
             </div>
         </template>
         <template v-if="dialogc" v-for="item in sanji">
             <div class="yiji">
               <mu-list-item :title="item.name" :data="item.id" @click="sanjiClick(item.id,item.name)"   />
-               <span class="jian" ></span>
+              <span class="jian" ></span>
               <mu-divider/>
             </div>
         </template>
@@ -39,8 +43,6 @@
     </div>
   </div>
   <div class="btn-box" v-if="inputBox">
-
-
     <div class="btn">
       <mu-raised-button label="上传证件照片" @click="submit" class="demo-raised-button" secondary fullWidth />
     </div>
@@ -68,7 +70,9 @@ export default {
       detailAddress: '',
       areaid: '',
       addError: '',
-      detaError: ''
+      detaError: '',
+      disabled: false,
+      back: false
 
     }
   },
@@ -79,16 +83,16 @@ export default {
       this.dialoga = true;
       this.dialogc = false;
       this.dialogb = false;
+      this.back=true;
     },
-
     yijiClick(value, name) {
+      this.back=true;
       this.areaa = name;
       this.dialogb = true;
       this.dialoga = false;
       this.inputBox = false;
       this.axios.post('/api/Params/Region?regionid=' + value).
       then((res) => {
-
           this.erji = res.data;
         })
         .catch(function(err) {
@@ -97,6 +101,7 @@ export default {
 
     },
     erjiClick(value, name) {
+      this.back=true;
       this.inputBox = false;
       this.areab = name;
       this.dialogb = false;
@@ -110,6 +115,7 @@ export default {
         });
     },
     sanjiClick(value, name) {
+      this.back=false;
       this.areaid = value;
       this.areac = name;
       this.dialog = false;
@@ -117,10 +123,7 @@ export default {
       this.address = this.areaa + "/" + this.areab + "/" + this.areac;
     },
     submit() {
-
-
-
-      if(this.address=='') {
+      if(this.address=='' && this.disabled==false ) {
         this.addError="请输入所在地区";
         return false;
       }
@@ -159,21 +162,64 @@ export default {
         detailAddress: this.detailAddress
       }
     }
+  },
+  mounted() {
+    // 检测是否填写企业认证
+    this.axios.get('/personal/publish/is_auth')
+      .then(response => {
+        if (response.data == "ok") {
+          this.if_check = true;
+          if (this.if_check) {
+            this.axios.post('/personal/personal/ischecked?time=' + Date.parse(new Date()))
+              .then(response => {
+                var info = response.data.data;
+
+                var message = response.data.msg;
+
+                if (message == 'is_checked_no') {
+                  this.bottomPopupa = true;
+                  this.$store.commit('changeStatus', false);
+                } else if (message == 'is_checked_ing') {
+                  this.bottomPopupb = true;
+                  this.$store.commit('changeStatus', true);
+
+                } else if (message == "is_checked_ok") {
+                  this.bottomPopupc = true;
+                  this.$store.commit('changeStatus', true);
+                }
+                this.disabled=this.$store.state.disabled;
+                this.detailAddress = info.contact_address;
+              })
+              .catch(function(err) {
+
+              });
+          }
+        }
+      })
+      .catch(function(err) {
+        // console.log(err);
+      });
   }
 
 }
 </script>
-<style scoped>
+<style>
 .mu-appbar {
   text-align: center;
   font-size: 20px;
 }
 
-.mu-appbar span:nth-child(1) {
-  font-size: 26px;
+.address  .mu-appbar {
+  position: relative;
+}
+.address  .mu-appbar span:nth-child(1) {
+  position: absolute;
+  left: 0;
+  top: 10px;
 }
 
-.mu-appbar span:nth-child(2) {
+
+.address  .mu-appbar span:nth-child(2) {
   width: 100%;
   text-align: center;
 }
@@ -189,9 +235,9 @@ export default {
 }
 
 .address-btn {
-  position: absolute;
-  right: 0;
-  top: 0;
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
 }
 
 .yiji {
@@ -201,16 +247,15 @@ export default {
 .jian {
   position: absolute;
   right: 0;
-  top: 36%;
+  top: 32%;
 }
 
-.demo-raised-button {
+.address .demo-raised-button {
   background-color: #3399ff;
   height: 50px;
   border-radius: 50px;
   font-size: 20px;
 }
-
 .btn-box {
   padding: 20px 50px 50px 50px;
 }
@@ -249,5 +294,18 @@ export default {
 }
 .zhengjianlist .mu-grid-tile-titlebar {
   display: none;
+}
+
+
+
+.area  .mu-text-field-hint  {
+  color: #333;
+}
+
+.area  .mu-flat-button {
+  color: #ccc;
+}
+.area   .mu-text-field-input {
+    color: #333;
 }
 </style>

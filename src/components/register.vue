@@ -160,7 +160,7 @@ export default {
   padding-left: 25px;
 }
 
-.register .register .demo-raised-button {
+.register  .demo-raised-button {
   background-color: #3399ff;
   height: 50px;
   border-radius: 50px;
@@ -168,7 +168,7 @@ export default {
 }
 
 .register .btn {
-  padding: 50px;
+  margin: 20px 50px 50px 50px;
 }
 
 .register .verify {

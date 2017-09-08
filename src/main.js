@@ -33,6 +33,7 @@ const store = new Vuex.Store({
       img5: '',
       img6: ''
     },
+    disabled: false
 
   },
   mutations: {
@@ -58,6 +59,9 @@ const store = new Vuex.Store({
       state.certification.img4=item.img4;
       state.certification.img5=item.img5;
       state.certification.img6=item.img6;
+    },
+    changeStatus(state,item) {
+      state.disabled=item;
     }
   }
 })
