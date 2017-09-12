@@ -206,6 +206,9 @@ export default {
 
     }
   },
+  created(){
+    document.title = "进取酒店供应链平台"
+  },
   mounted() {
     // 检测是否填写企业认证
     this.axios.get('/personal/publish/is_auth')

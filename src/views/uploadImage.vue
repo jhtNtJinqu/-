@@ -22,7 +22,7 @@
 export default {
   data(){
     return {
-      
+
     }
   },
   methods: {
@@ -42,6 +42,9 @@ export default {
       })
     },
 
+  },
+  created(){
+    document.title = "进取酒店供应链平台"
   }
 }
 </script>

@@ -7,6 +7,9 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import 'muse-ui/dist/muse-ui.css'
 import 'muse-ui/dist/theme-light.css'
+import '@/assets/css/icon.css'
+
+
 Vue.use(MuseUI)
 Vue.use(Vuex)
 

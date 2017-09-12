@@ -10,11 +10,11 @@
     <div class="address-select" v-if="inputBox">
 
       <div class="area">
-        <mu-text-field hintText="所在地区"  :errorText="addError"   @focus="addError=''"  fullWidth disabled v-model="address" />
+        <mu-text-field hintText="请选择所在地区"   label="所在地区" :errorText="addError"   @focus="addError=''"  fullWidth disabled v-model="address" />
         <mu-flat-button label="请选择" @click="showDialog"   :disabled="disabled"   class="address-btn demo-flat-button" /><br/>
       </div>
 
-      <mu-text-field hintText="详细地址"  :disabled="disabled"   fullWidth :errorText="detaError"  @focus="detaError=''" v-model="detailAddress"  /><br/>
+      <mu-text-field hintText="请输入详细地址"  label="详细地址"    :disabled="disabled"   fullWidth :errorText="detaError"  @focus="detaError=''" v-model="detailAddress"  /><br/>
     </div>
     <div class="choose" v-if="dialog">
       <mu-list>
@@ -44,7 +44,7 @@
   </div>
   <div class="btn-box" v-if="inputBox">
     <div class="btn">
-      <mu-raised-button label="上传证件照片" @click="submit" class="demo-raised-button" secondary fullWidth />
+      <mu-raised-button label="下一步"  labelPosition="before" icon="arrow_forward"    @click="submit" class="demo-raised-button" secondary fullWidth />
     </div>
   </div>
 
@@ -147,6 +147,7 @@ export default {
 
   },
   created() {
+    document.title = "进取酒店供应链平台"
     this.axios.post('/api/Params/Region ').
     then((res) => {
         this.yiji = res.data;
@@ -237,7 +238,7 @@ export default {
 .address-btn {
   position: absolute !important;
   right: 0 !important;
-  top: 0 !important;
+  top: 20px !important;
 }
 
 .yiji {
@@ -279,7 +280,7 @@ export default {
   font-size: 20px !important;
 }
 
-.btn {
+.address  .btn {
   background-color: #3399ff;
   text-align: center;
   color: #fff;

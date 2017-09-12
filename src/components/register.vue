@@ -2,16 +2,16 @@
 <!-- 注册 -->
 <div class="register">
   <mu-appbar title="注册"></mu-appbar>
-  <img src="../assets/login.jpg" />
+  <img src="http://ouggi6vk1.bkt.clouddn.com/mobile/image/login.jpg" />
   <div class="form">
-    <mu-text-field hintText="请输入手机号" v-model="phone" @input="input" type="number" @blur="phoneInput" :errorText="inputErrorText" icon="phone_iphone" fullWidth /><br/>
+    <mu-text-field hintText="请输入手机号"  label="手机号"   labelFloat   v-model="phone" @input="input" type="number" @blur="phoneInput" :errorText="inputErrorText" icon="phone_iphone" fullWidth /><br/>
     <div class="verify">
-      <mu-text-field hintText="请输入验证码" v-model="verify" @input="verErrorText=''" type="number" icon="chat" fullWidth :errorText="verErrorText" />
+      <mu-text-field hintText="请输入验证码"   label="验证码"   labelFloat    v-model="verify" @input="verErrorText=''" type="number" icon="chat" fullWidth :errorText="verErrorText" />
 
       <mu-flat-button @click="getMess" :label="mess" class="demo-flat-button" :disabled='btnStatus' />
     </div>
 
-    <mu-text-field hintText="请输入6位数以上的密码" @input="passErrorText=''" v-model="pass" @blur="passInput" :errorText="passErrorText" type="password" icon="lock_outline" fullWidth/><br/>
+    <mu-text-field hintText="请输入6位数以上的密码"   label="密码"   labelFloat    @input="passErrorText=''" v-model="pass" @blur="passInput" :errorText="passErrorText" type="password" icon="lock_outline" fullWidth/><br/>
   </div>
   <div class="btn">
     <mu-raised-button label="注册" @click="submit" class="demo-raised-button" secondary fullWidth />
@@ -50,6 +50,10 @@ export default {
       }
     },
     phoneInput() {
+      if(this.phone=="") {
+        this.inputErrorText = "手机号不能为空";
+        return false;
+      }
       if (!(/^1[34578]\d{9}$/.test(this.phone))) {
         this.inputErrorText = "请输入正确手机号";
       } else {
@@ -58,7 +62,10 @@ export default {
       }
     },
     passInput() {
-
+      if(this.pass=='') {
+          this.passErrorText = "密码不能为空";
+        return false;
+      }
       if (this.pass.length < 6) {
         this.passErrorText = "密码必须6位数以上";
       } else {
@@ -137,6 +144,10 @@ export default {
 
     }
   },
+  created() {
+
+      document.title = "进取酒店供应链平台-注册"
+  }
 }
 </script>
 
@@ -168,7 +179,7 @@ export default {
 }
 
 .register .btn {
-  margin: 20px 50px 50px 50px;
+  margin: 30px 50px 50px 50px;
 }
 
 .register .verify {
@@ -178,7 +189,7 @@ export default {
 .register .verify .demo-flat-button {
   position: absolute;
   right: 0;
-  top: 0;
+  top: 21px;
 }
 
 .demo-popup-top {
