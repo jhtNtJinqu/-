@@ -20,6 +20,12 @@
     注册成功
   </mu-popup>
   <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopupb">
+    账号已注册
+  </mu-popup>
+  <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopupc">
+    验证码错误
+  </mu-popup>
+  <mu-popup position="top" :overlay="false" popupClass="demo-popup-top" :open="topPopupd">
     注册失败
   </mu-popup>
 </div>
@@ -41,10 +47,14 @@ export default {
       pass: '',
       topPopup: false,
       topPopupb: false,
+      topPopupc: false,
+      topPopupd: false
+
     }
   },
   methods: {
     input() {
+      this.inputErrorText='';
       if ((/^1[34578]\d{9}$/.test(this.phone))) {
         this.btnStatus = false;
       }
@@ -96,7 +106,12 @@ export default {
           phone: this.phone
         })
         .then(res => {
-
+          if(res.data=="该号码已经注册") {
+            this.inputErrorText ="该号码已经注册";
+            clearInterval(clear)
+            this.mess = "获取验证码"
+            return false;
+          }
         })
         .catch(err => {
           // console.log(err);
@@ -117,13 +132,14 @@ export default {
         this.passErrorText = "密码不能为空";
         return false;
       }
-      this.axios.post('/personal/register/register', {
+      this.axios.post('/personal/register/mobileRegister', {
           phone: this.phone,
           password: this.pass,
           messageCode: this.verify
         })
         .then(res => {
-          if (res.data) {
+
+          if (res.data=="ok") {
             this.topPopup = true;
             setTimeout(() => {
               this.$router.push({
@@ -131,11 +147,24 @@ export default {
               })
             }, 1500)
 
-          } else {
+          } else if(res.data=="该号码已注册") {
             this.topPopupb = true;
             setTimeout(() => {
               this.topPopupb = false;
             }, 1500)
+            return false
+          } else if(res.data=='验证码错误') {
+            this.topPopupc = true;
+            setTimeout(() => {
+              this.topPopupc = false;
+            }, 1500)
+            return false
+          } else {
+            this.topPopupd = true;
+            setTimeout(() => {
+              this.topPopupd = false;
+            }, 1500)
+            return false
           }
         })
         .catch(err => {

@@ -92,7 +92,6 @@ export default {
     },
     imageuploadea(res) {
       this.urla = res.url;
-
       this.bia = true;
       this.showa = false;
 
